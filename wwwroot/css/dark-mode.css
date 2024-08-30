@@ -1,0 +1,82 @@
+﻿/* dark-mode.css */
+
+body {
+    background-color: #121212;
+    color: #e0e0e0;
+}
+
+.navbar {
+    background-color: #1e1e1e !important;
+    border-bottom: 1px solid #444;
+}
+
+.navbar-brand, .nav-link {
+    color: #4caf50 !important;
+}
+
+.navbar-toggler {
+    border-color: #4caf50;
+}
+
+.navbar-toggler-icon {
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba(76, 175, 80, 1)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/ %3E%3C/svg%3E");
+}
+
+footer {
+    background-color: #333;
+    border-top: 1px solid #444;
+    color: #e0e0e0;
+}
+
+.container-fluid {
+    padding: 30px;
+}
+
+.form-section {
+    margin-bottom: 40px;
+    padding: 20px;
+    background-color: #1e1e1e;
+    border-radius: 8px;
+}
+
+.section-heading {
+    color: #4caf50;
+    margin-bottom: 20px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+input[type="text"], input[type="email"], input[type="file"] {
+    background-color: #333;
+    color: #e0e0e0;
+    border: 1px solid #555;
+    padding: 10px;
+    border-radius: 4px;
+}
+
+    input[type="text"]::placeholder, input[type="email"]::placeholder {
+        color: #999;
+    }
+
+button {
+    background-color: #4caf50;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+    button:hover {
+        background-color: #45a049;
+    }
+
+.field-validation-error {
+    color: #ff6b6b;
+}
+
+.field-validation-valid {
+    color: #6bff6b;
+}
