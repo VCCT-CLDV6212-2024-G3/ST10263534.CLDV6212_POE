@@ -1,13 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
-using SemesterTwo.Models;
-using SemesterTwo.Services;
-using System.Diagnostics;
-using System.IO;
-using System.Net.Http;
+using Newtonsoft.Json;
 using System.Net.Http.Headers;
 using System.Text;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
+using SemesterTwo.Models;
+using SemesterTwo.Services;
 
 namespace SemesterTwo.Controllers
 {
@@ -19,18 +15,13 @@ namespace SemesterTwo.Controllers
         private readonly FileService _fileService;
         private readonly HttpClient _httpClient;
 
-        public HomeController(HttpClient httpClient, BlobService blobService, TableService tableService, QueueService queueService, FileService fileService)
+        public HomeController(BlobService blobService, TableService tableService, QueueService queueService, FileService fileService, HttpClient httpClient)
         {
-            _httpClient = httpClient;
             _blobService = blobService;
             _tableService = tableService;
             _queueService = queueService;
             _fileService = fileService;
-        }
-
-        public IActionResult Index()
-        {
-            return View();
+            _httpClient = httpClient;
         }
 
         [HttpPost]
@@ -41,11 +32,12 @@ namespace SemesterTwo.Controllers
                 using var stream = file.OpenReadStream();
 
                 // Call the Azure Function for uploading blob
-                var url = "https://st10263534.azurewebsites.net/api/UploadBlob?code=0nS8qtj9n8qaVqvZjH2Mh2TZ8HE1zjEuGKqJA9sdA1aYAzFumP3czg%3D%3D"; // Replace with actual URL
+                var url = "https://st10263534.azurewebsites.net/api/UploadBlob?code=0nS8qtj9n8qaVqvZjH2Mh2TZ8HE1zjEuGKqJA9sdA1aYAzFumP3czg%3D%3D";
                 var content = new StreamContent(stream);
                 content.Headers.ContentType = new MediaTypeHeaderValue(file.ContentType);
 
-                var response = await _httpClient.PostAsync($"{url}?containerName=product-images&blobName={file.FileName}", content);
+                // Include parameters for containerName and blobName
+                var response = await _httpClient.PostAsync($"{url}&containerName=product-images&blobName={file.FileName}", content);
                 response.EnsureSuccessStatusCode(); // Throw if the request fails
             }
 
@@ -57,9 +49,10 @@ namespace SemesterTwo.Controllers
         {
             if (ModelState.IsValid)
             {
-                var url = "https://st10263534.azurewebsites.net/api/StoreTableInfo?code=UdZ3M9o9nReZ0XwDZMuJhHs9BfBDUoCxl2z0NRvaQhMdAzFujwZNag%3D%3D"; // Replace with actual URL
+                var url = "https://st10263534.azurewebsites.net/api/StoreTableInfo?code=UdZ3M9o9nReZ0XwDZMuJhHs9BfBDUoCxl2z0NRvaQhMdAzFujwZNag%3D%3D";
                 var jsonContent = new StringContent(JsonConvert.SerializeObject(profile), Encoding.UTF8, "application/json");
 
+                // Call the Azure Function to store table information
                 var response = await _httpClient.PostAsync(url, jsonContent);
                 response.EnsureSuccessStatusCode(); // Throw if the request fails
             }
@@ -70,9 +63,10 @@ namespace SemesterTwo.Controllers
         [HttpPost]
         public async Task<IActionResult> ProcessOrder(string orderId)
         {
-            var url = "https://st10263534.azurewebsites.net/api/ProcessQueueMessage?code=bt0CE8oAdNjvyQY84H-HRSSbJMKK3iPc_T02uKrVeJMKAzFuGUOiqg%3D%3D"; // Replace with actual URL
+            var url = "https://st10263534.azurewebsites.net/api/ProcessQueueMessage?code=bt0CE8oAdNjvyQY84H-HRSSbJMKK3iPc_T02uKrVeJMKAzFuGUOiqg%3D%3D";
             var jsonContent = new StringContent(JsonConvert.SerializeObject(new { orderId }), Encoding.UTF8, "application/json");
 
+            // Call the Azure Function to process the order message
             var response = await _httpClient.PostAsync(url, jsonContent);
             response.EnsureSuccessStatusCode(); // Throw if the request fails
 
@@ -85,12 +79,13 @@ namespace SemesterTwo.Controllers
             if (file != null)
             {
                 using var stream = file.OpenReadStream();
-                var url = "https://st10263534.azurewebsites.net/api/UploadFile?code=MlcZN6qiJngSI7xZXE_gKtYH4RP246ucdeveINrn4opQAzFukH76kg%3D%3D"; // Replace with actual URL
+                var url = "https://st10263534.azurewebsites.net/api/UploadFile?code=MlcZN6qiJngSI7xZXE_gKtYH4RP246ucdeveINrn4opQAzFukH76kg%3D%3D";
 
                 var content = new StreamContent(stream);
                 content.Headers.ContentType = new MediaTypeHeaderValue(file.ContentType);
 
-                var response = await _httpClient.PostAsync($"{url}?shareName=contracts-logs&fileName={file.FileName}", content);
+                // Include parameters for shareName and fileName
+                var response = await _httpClient.PostAsync($"{url}&shareName=contracts-logs&fileName={file.FileName}", content);
                 response.EnsureSuccessStatusCode(); // Throw if the request fails
             }
 
